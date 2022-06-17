@@ -1,0 +1,92 @@
+---
+title: "Regression Model Assignment"
+author: "Stephen Sani"
+date: "April 27, 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Executive Summary
+We  explored the relationship between a set of variables and miles per gallon (MPG) for the Motor Trend Magazine. 
+
+The report is based on the mtcars data in R: A data frame with 32 observations on 11 variables.
+
+*       [, 1]	 mpg	 Miles/(US) gallon
+*       [, 2]	 cyl	 Number of cylinders
+*       [, 3]	 disp	 Displacement (cu.in.)
+*       [, 4]	 hp	 Gross horsepower
+*       [, 5]	 drat	 Rear axle ratio
+*       [, 6]	 wt	 Weight (1000 lbs)
+*       [, 7]	 qsec	 1/4 mile time
+*       [, 8]	 vs	 V/S
+*       [, 9]	 am	 Transmission (0 = automatic, 1 = manual)
+*       [,10]	 gear	 Number of forward gears
+*       [,11]	 carb	 Number of carburetors
+
+The following questions were answered :
+
+1.      Is an automatic or manual transmission better for MPG”
+
+2.      Quantify the MPG difference between automatic and manual transmissions
+
+We conclude that regardless of whether or not we adjust for other variables, automatic transmission is better for mpg.
+
+## Analysis
+The data was loaded into R and the first few rows viewed
+```{r}
+data(mtcars); head(mtcars)
+```
+
+The relationships for the variables in the mtcars data was plotted. 
+```{r}
+library(GGally); library(ggplot2);
+g <- ggpairs(mtcars, lower = list(continuous = "smooth"))
+g
+```
+
+## Model fit1: mpg as outcome, adjusted for all variables (am is factor variable).
+From the plot, all the variables are corellated with mpg thus all variables was used to fit a model.
+
+We fit a linear model with "mpg" as outcome and all the other variables ("am" as a factor variable).
+```{r}
+fit1 <- lm(mpg~cyl+disp+hp+drat+qsec+vs+gear+carb+factor(am), data=mtcars)
+round(summary(fit1)$coef, 3)
+```
+
+From the coefficients, the mean mpg for automatic transmission is higher than that of manual transmission by 2.901 thus Automatic transmission is better than manual transmission if all other variables are held constant.
+
+To investigate the model fit, We plot the model
+```{r}
+par(mfrow = c(2,2))
+plot(fit1)
+```
+
+There is no clear pattern to be discovered from the Residual Vs Fitted values plot.
+
+The Normal Q-Q plot also show that the Standardized residuals and the Theoretical Quantiles nearly follows a straight line as expcted.
+
+
+## Model fit2: mpg as outcome and am as predictor.
+We fit a linear model with "mpg" as outcome and am as predictor ("am" is a factor variable).
+```{r}
+fit2 <- lm(mpg~factor(am), data=mtcars)
+round(summary(fit2)$coef, 3)
+```
+
+From the coefficients, the mean mpg for automatic Transmission is higher than that of manual transmission by 7.245 thus Automatic transmission is better than manual transmission.
+
+To investigate the model fit, We plot the model
+```{r}
+par(mfrow = c(2,2))
+plot(fit2)
+```
+
+There is no clear pattern to be discovered from the Residual Vs Fitted values plot.
+
+The Normal Q-Q plot also show that the Standardized residuals and the Theoretical Quantiles nearly follows a straight line as expcted.
+
+## Conclussion
+Based on the mtcars data, automatic transmission is better than manual transmission for Miles per Gallon (mpg) whether or not we adjust for other variables.
